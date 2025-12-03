@@ -1,6 +1,6 @@
 name: RMG
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build-linux:
@@ -85,15 +85,13 @@ jobs:
           cmake --install "$build_dir" --strip --prefix="$bin_dir/usr"
         shell: bash
       - name: Create AppImage
-        if: ${{ matrix.features == 'ON' && matrix.architecture == 'x86_64' }}
         run: |
           ./Package/AppImage/Create.sh
         shell: bash
       - name: Upload RMG (AppImage)
-        if: ${{ matrix.features == 'ON' && matrix.architecture == 'x86_64' }}
         uses: actions/upload-artifact@v5
         with:
-          name: RMG-Portable-Linux64-${{ env.GIT_REVISION }}
+          name: RMG-Portable-Linux-${{ matrix.architecture }}-${{ matrix.features }}-${{ env.GIT_REVISION }}
           path: Bin/*.AppImage
 
   build-windows:
